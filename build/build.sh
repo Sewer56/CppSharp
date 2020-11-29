@@ -120,11 +120,14 @@ download_llvm()
 
 clone_llvm()
 {
+  echo "builddirseeeeees $builddir"
   "$builddir/premake.sh" --file="$builddir/llvm/LLVM.lua" clone_llvm --os=$os --arch=$platform --configuration=$configuration
 }
 
 build_llvm()
 {
+  rm -rf "$builddir/../Directory.Build.props"
+  rm -rf "$builddir/../Directory.Packages.props"
   "$builddir/premake.sh" --file="$builddir/llvm/LLVM.lua" build_llvm --os=$os --arch=$platform --configuration=$configuration
 }
 

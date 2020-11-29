@@ -25,7 +25,19 @@ jobs:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Check out on Windows
+        if: matrix.config.vs > 0
+        shell: cmd
+        run: |
+          cd C:\
+          git clone https://github.com/mono/CppSharp.git
+          cd CppSharp
+          git checkout ${{ github.event.pull_request.head.sha }}
+        
+      - name: Check out on Unix
+        if: matrix.config.vs <= 0
+        uses: actions/checkout@v2
+        
       - uses: lukka/get-cmake@latest
 
       - name: Environment
@@ -40,23 +52,31 @@ jobs:
             echo ::set-env name=%%a::%%b
           )
           endlocal
+        working-directory: C:\CppSharp
 
       - name: Fix intrin.h file
         if: matrix.config.vs > 0
         shell: powershell
         run: build/intrin.ps1
+        working-directory: C:\CppSharp
 
       - name: Clone LLVM
         shell: bash
         run: build/build.sh clone_llvm
+        if: matrix.config.vs > 0
+        working-directory: C:\CppSharp
           
       - name: Build LLVM
         shell: bash
         run: build/build.sh build_llvm -platform $PLATFORM
+        if: matrix.config.vs > 0
+        working-directory: C:\CppSharp
 
       - name: Package LLVM
         shell: bash
         run: build/build.sh package_llvm -platform $PLATFORM
+        if: matrix.config.vs > 0
+        working-directory: C:\CppSharp
 
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v2
