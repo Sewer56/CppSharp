@@ -60,6 +60,7 @@ namespace CppSharp.Extensions
                     return (targetInfo.LongLongWidth, targetInfo.LongLongAlign);
 
                 case PrimitiveType.Char:
+                case PrimitiveType.SChar:
                     signed = true;
                     return (targetInfo.CharWidth, targetInfo.CharAlign);
                 case PrimitiveType.UChar:
